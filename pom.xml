@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nabu.web.rest</groupId>
 	<artifactId>provider</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>${nabu.web.rest-provider-version}</version>
 	<name>provider</name>
 	
 	<parent>
@@ -18,7 +18,14 @@
 		<dependency>
 			<groupId>nabu.web</groupId>
 			<artifactId>application</artifactId>
-			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>nabu.services</groupId>
+			<artifactId>authorization</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>nabu.services</groupId>
+			<artifactId>vm</artifactId>
 		</dependency>
 	</dependencies>
 </project>
