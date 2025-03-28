@@ -1,0 +1,40 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="2c055c9c254942b78aed7a675a2fdceb"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="99518ec170cc4dd0bc707177ce65a3e9"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="91ad11ad29ce437d9b8f1ff06e605dd5"
+				serviceId="nabu.web.rest.provider.providers.sast.analyzeRestServiceSecurity"
+				resultName="result305e3c1a23e54cf7b01d3b880e1b9b1e"
+				temporaryMapping="true"
+				x="105"
+				y="32"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="ce1db85d02d0433aa73213536428730d"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/contextId</from>
+				<to>webApplicationId</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="952392255987468e9f35fd42813892ee"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result305e3c1a23e54cf7b01d3b880e1b9b1e/results</from>
+			<to>output/results</to>
+		</steps>
+	</steps>
+</sequence>

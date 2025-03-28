@@ -1,0 +1,62 @@
+@interface nabu.frameworks.sast.specs.globalSecurityAnalyzer
+
+string webApplicationId ?= null
+artifacts = nabu.utils.reflection.Node.listByType(type: "be.nabu.eai.module.rest.provider.RESTService")/nodes
+results = series()
+
+# let's hope...
+hasRoleHandler = true
+hasPermissionHandler = true
+
+if (webApplicationId != null)
+	webApplication = be.nabu.eai.repository.EAIResourceRepository.getInstance()/resolve(webApplicationId)
+	hasPermissionHandler = webApplication/config/permissionService != null
+	hasRoleHandler = webApplication/config/roleService != null
+
+for (artifact : artifacts)
+	if (webApplicationId != null)
+		fragment = nabu.web.application.Services.fragment(webApplicationId: webApplicationId, fragmentId: artifact/id)/fragment
+		
+	if (webApplicationId == null || fragment != null)
+		resolved = be.nabu.eai.repository.EAIResourceRepository.getInstance()/resolve(artifact/id)
+		severity = "INFO"
+		type = null
+		
+		# if you have a custom security tab, we can't really deduce anything, let's hope it's good
+		if (resolved/getArtifact("security") == null)
+			# if we don't have a permission handler, it is useless to flag each rest service
+			# the application itself should already be flagged
+			if (hasPermissionHandler)
+				# once you have a permission handler, all services _should_ have a permission, even if it is to assign to $guest
+				# if you know before hand you never want to distinguish it would still be considered OK, but this has to be a very explicit design choice
+				if (resolved/interface/config/permissionAction == null)
+					# if you have no permission action, that's probably not good but if you are also missing a role this is potentially a huge security hole
+					if (resolved/interface/config/role == null || !hasRoleHandler)
+						severity = "CRITICAL"
+						title = "This service is accessible to everyone who can reach the endpoint".
+						suggestion = "Add a permission action to configure who can access this"
+						type = "global-access"
+					else
+						severity = "ERROR"
+						title = "This service is accessible to everyone with the role: " + join(", ", resolved/interface/config/role)
+						suggestion = "Add a permission action to configure who can access this"
+						type = "role-access"
+
+			# if we get here, we already assume you don't have a permission handler, so role handler is the only security you got (which is already bad)			
+			else if (hasRoleHandler)	
+				if (resolved/interface/config/role == null)
+					severity = "CRITICAL"
+					title = "This service is accessible to everyone who can reach the endpoint".
+					suggestion = "Add a permission action to configure who can access this"
+					type = "global-access"
+
+		if (severity != "INFO")
+			results = merge(results, structure(
+				contextId: webApplicationId,
+				targetId: artifact/id, 
+				type: type,
+				instance: type,
+				severity: severity, 
+				title: title,
+				suggestion: suggestion))
+	
