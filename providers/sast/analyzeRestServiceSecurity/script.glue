@@ -51,7 +51,8 @@ for (artifact : artifacts)
 					type = "global-access"
 
 		if (severity != "INFO")
-			results = merge(results, structure(
+			@return
+			nabu.frameworks.sast.securityEvent [] results = merge(results, structure(
 				contextId: webApplicationId,
 				targetId: artifact/id, 
 				type: type,
